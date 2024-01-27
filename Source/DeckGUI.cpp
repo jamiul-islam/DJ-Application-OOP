@@ -12,79 +12,123 @@
 #include "DeckGUI.h"
 
 //==============================================================================
-DeckGUI::DeckGUI(DJAudioPlayer *_player, AudioFormatManager &formatManagerToUse, AudioThumbnailCache &cacheToUse)
-        : player(_player), waveformDisplay(formatManagerToUse, cacheToUse) {
+DeckGUI::DeckGUI(DJAudioPlayer *_player, PlaylistComponent *_playlistComponent, AudioFormatManager &formatManagerToUse,
+                 AudioThumbnailCache &cacheToUse, int channelToUse
+) : player(_player), playlistComponent(_playlistComponent), waveformDisplay(formatManagerToUse, cacheToUse),
+    channel(channelToUse) {
 
-    // show button and sliders
+    // add buttons for each GUI items
     addAndMakeVisible(playButton);
     addAndMakeVisible(stopButton);
-    addAndMakeVisible(loadButton);
-
-    addAndMakeVisible(volSlider);
-    addAndMakeVisible(speedSlider);
+    addAndMakeVisible(nextButton);
     addAndMakeVisible(posSlider);
-
+    addAndMakeVisible(volSlider);
+    addAndMakeVisible(volLabel);
+    addAndMakeVisible(speedSlider);
+    addAndMakeVisible(speedLabel);
     addAndMakeVisible(waveformDisplay);
+    addAndMakeVisible(upNext);
 
-    // add event listeners
+    // add listeners to buttons and sliders
     playButton.addListener(this);
     stopButton.addListener(this);
-    loadButton.addListener(this);
-
+    nextButton.addListener(this);
+    posSlider.addListener(this);
     volSlider.addListener(this);
     speedSlider.addListener(this);
-    posSlider.addListener(this);
 
-    // set slider range
-    volSlider.setRange(0.0, 1.0);
-    speedSlider.setRange(0.0, 100.0);
+    // position slider for each GUI
+    posSlider.setSliderStyle(Slider::SliderStyle::LinearHorizontal);
     posSlider.setRange(0.0, 1.0);
+    posSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 
-    startTimer(500);
+    // volume slider for each GUI
+    volSlider.setRange(0.0, 1.0);
+    volSlider.setValue(0.5); //default volume half of max vol
+    volSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+    volSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
+
+    // label for volume slider
+    volLabel.setText("Volume", juce::dontSendNotification);
+    volLabel.attachToComponent(&volSlider, false);
+    volLabel.setJustificationType(juce::Justification::centred);
+
+    // speed slider for each GUI
+    speedSlider.setRange(0.5, 2, 0);
+    speedSlider.setValue(1);
+    speedSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalDrag);
+    speedSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
+    speedSlider.setMouseDragSensitivity(80);
+
+    // label for speed slider
+    speedLabel.setText("Speed X", juce::dontSendNotification);
+    speedLabel.attachToComponent(&speedSlider, false);
+    speedLabel.setJustificationType(juce::Justification::centred);
+
+    // set colour to sliders
+    getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::mediumspringgreen); //dial
+    getLookAndFeel().setColour(juce::Slider::trackColourId, juce::Colours::lightslategrey); //body
+    getLookAndFeel().setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::lightslategrey); //body
+
+    upNext.getHeader().addColumn("Up Next", 1, 100);
+    upNext.setModel(this);
+
+    startTimer(100);
 }
 
 DeckGUI::~DeckGUI() {
     stopTimer();
 }
 
-void DeckGUI::paint(juce::Graphics &g) {
-    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour(juce::Colours::grey);
-    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour(juce::Colours::grey);
-    g.setFont(14.0f);
-    g.drawText("DeckGUI", getLocalBounds(), juce::Justification::centred, true);   // draw some placeholder text
-}
+void DeckGUI::paint(Graphics &g) {}
 
 void DeckGUI::resized() {
-    double rowH = getHeight() / 8;
-    playButton.setBounds(0, 0, getWidth(), rowH);
-    stopButton.setBounds(0, rowH, getWidth(), rowH);
-    volSlider.setBounds(0, rowH * 2, getWidth(), rowH);
-    speedSlider.setBounds(0, rowH * 3, getWidth(), rowH);
-    posSlider.setBounds(0, rowH * 4, getWidth(), rowH);
-    waveformDisplay.setBounds(0, rowH * 5, getWidth(), rowH * 2);
-    loadButton.setBounds(0, rowH * 7, getWidth(), rowH);
+    double rowH = getHeight() / 6;
+    double colW = getWidth() / 4;
+
+    waveformDisplay.setBounds(0, 0, getWidth(), rowH * 2);
+
+    posSlider.setBounds(0, rowH * 2, getWidth(), rowH);
+    volSlider.setBounds(0, rowH * 3 + 20, colW, rowH * 3 - 30);
+    speedSlider.setBounds(colW, rowH * 3 + 20, colW * 1.5, rowH * 2 - 30);
+
+    upNext.setBounds(colW * 2.5, rowH * 3, colW * 1.5 - 20, rowH * 2);
+
+    playButton.setBounds(colW + 10, rowH * 5 + 10, colW - 20, rowH - 20);
+    stopButton.setBounds(colW * 2 + 10, rowH * 5 + 10, colW - 20, rowH - 20);
+    nextButton.setBounds(colW * 3 + 10, rowH * 5 + 10, colW - 20, rowH - 20);
+
 }
 
 void DeckGUI::buttonClicked(Button *button) {
     if (button == &playButton) {
-        std::cout << "Play button was clicked " << std::endl;
         player->start();
     }
     if (button == &stopButton) {
-        std::cout << "Stop button was clicked " << std::endl;
         player->stop();
     }
-    if (button == &loadButton) {
-        FileChooser chooser{"Select a file..."};
-        if (chooser.browseForFileToOpen()) {
-            player->loadURL(URL{chooser.getResult()});
-            waveformDisplay.loadURL(URL{chooser.getResult()});
+    if (button == &nextButton) {
+        if (channel == 0 && playlistComponent->playListL.size() > 0) {
+            URL fileURL = URL{File{playlistComponent->playListL[0]}};
+            player->loadURL(fileURL);
+            waveformDisplay.loadURL(fileURL);
+            playlistComponent->playListL.erase(playlistComponent->playListL.begin());
+        }
+        if (channel == 1 && playlistComponent->playListR.size() > 0) {
+            URL fileURL = URL{File{playlistComponent->playListR[0]}};
+            player->loadURL(fileURL);
+            waveformDisplay.loadURL(fileURL);
+            playlistComponent->playListR.erase(playlistComponent->playListR.begin());
+        }
+
+        if (nextButton.getButtonText() == "LOAD") {
+            nextButton.setButtonText("NEXT");
+        } else {
+            player->start();
         }
     }
+
+    upNext.updateContent();
 }
 
 void DeckGUI::sliderValueChanged(Slider *slider) {
@@ -99,16 +143,35 @@ void DeckGUI::sliderValueChanged(Slider *slider) {
     }
 }
 
-bool DeckGUI::isInterestedInFileDrag(const StringArray &files) {
-    std::cout << "DeckGUI::isInterestedInFileDrag" << std::endl;
-    return true;
+int DeckGUI::getNumRows() {
+    if (channel == 0) {
+        return playlistComponent->playListL.size(); // left deck
+    }
+    if (channel == 1) {
+        return playlistComponent->playListR.size(); // right deck
+    }
 }
 
-void DeckGUI::filesDropped(const StringArray &files, int x, int y) {
-    std::cout << "DeckGUI::filesDropped" << std::endl;
-    if (files.size() == 1) {
-        player->loadURL(URL{File{files[0]}});
+void DeckGUI::paintRowBackground(Graphics &g, int rowNumber, int width, int height, bool rowIsSelected) {
+    g.fillAll(juce::Colours::mediumspringgreen);
+}
+
+void DeckGUI::paintCell(Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) {
+    std::string filepath = "";
+
+    if (channel == 0) {
+        filepath = playlistComponent->playListL[rowNumber];
     }
+    if (channel == 1) {
+        filepath = playlistComponent->playListR[rowNumber];
+    }
+
+    std::size_t startFilePos = filepath.find_last_of("\\");
+    std::size_t startExtPos = filepath.find_last_of(".");
+    std::string extn = filepath.substr(startExtPos + 1, filepath.length() - startExtPos);
+    std::string file = filepath.substr(startFilePos + 1, filepath.length() - startFilePos - extn.size() - 2);
+
+    g.drawText(file, 1, rowNumber, width - 4, height, Justification::centredLeft, true);
 }
 
 void DeckGUI::timerCallback() {

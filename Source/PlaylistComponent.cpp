@@ -12,44 +12,39 @@
 #include "PlaylistComponent.h"
 
 //==============================================================================
-PlaylistComponent::PlaylistComponent() {
+PlaylistComponent::PlaylistComponent(AudioFormatManager &_formatManager) : formatManager(_formatManager) {
 
-    // dummy data
-    trackTitles.push_back("Track 1");
-    trackTitles.push_back("Track 2");
-    trackTitles.push_back("Track 3");
-    trackTitles.push_back("Track 4");
-    trackTitles.push_back("Track 5");
-    trackTitles.push_back("Track 6");
-
-    tableComponent.getHeader().addColumn("Track title", 1, 500);
-    tableComponent.getHeader().addColumn("", 2, 100);
-
+    //set up playlist library table
+    tableComponent.getHeader().addColumn("Song Title", 1, 250);
+    tableComponent.getHeader().addColumn("Duration", 2, 100);
+    tableComponent.getHeader().addColumn("+ to Left", 3, 100);
+    tableComponent.getHeader().addColumn("+ to Right", 4, 100);
     tableComponent.setModel(this);
     addAndMakeVisible(tableComponent);
+
+    //add search bar and listener
+    addAndMakeVisible(searchBar);
+    searchBar.addListener(this);
+    //add label for search bar
+    addAndMakeVisible(searchLabel);
+    searchLabel.setText("Find Song: ", juce::dontSendNotification);
 }
 
-PlaylistComponent::~PlaylistComponent() {
-}
+PlaylistComponent::~PlaylistComponent() {}
 
-void PlaylistComponent::paint(juce::Graphics &g) {
-    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour(juce::Colours::grey);
-    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour(juce::Colours::white);
-    g.setFont(14.0f);
-    g.drawText("PlaylistComponent", getLocalBounds(),
-               juce::Justification::centred, true);   // draw some placeholder text
-}
+void PlaylistComponent::paint(juce::Graphics &g) {}
 
 void PlaylistComponent::resized() {
-    tableComponent.setBounds(0, 0, getWidth(), getHeight());
+    double rowH = getHeight() / 8;
+    double colW = getWidth() / 6;
+
+    searchLabel.setBounds(0, 0, colW, rowH);
+    searchBar.setBounds(colW, 0, colW * 5, rowH);
+    tableComponent.setBounds(0, rowH, getWidth(), rowH * 7);
 }
 
 int PlaylistComponent::getNumRows() {
-    return trackTitles.size();
+    return interestedTitle.size();
 }
 
 void PlaylistComponent::paintRowBackground(Graphics &g, int rowNumber, int width, int height, bool rowIsSelected) {
@@ -61,26 +56,129 @@ void PlaylistComponent::paintRowBackground(Graphics &g, int rowNumber, int width
 }
 
 void PlaylistComponent::paintCell(Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) {
-    g.drawText(trackTitles[rowNumber], 2, 0, width - 4, height, Justification::centredLeft, true);
+    // song title in the first column
+    if (columnId == 1) {
+        g.drawText(interestedTitle[rowNumber], 1, rowNumber, width - 4, height, Justification::centredLeft, true);
+    }
+
+    // song duration in the second column
+    if (columnId == 2) {
+        g.drawText(std::to_string(interestedDuration[rowNumber]) + "s", 1, rowNumber, width - 4, height,
+                   Justification::centredLeft, true);
+    }
 }
 
-Component *PlaylistComponent::refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component *existingComponentToUpdate) {
-    if (columnId == 2) {
+Component *PlaylistComponent::refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected,
+                                                      Component *existingComponentToUpdate) {
+    // buttons for left deck
+    if (columnId == 3) {
         if (existingComponentToUpdate == nullptr) {
-            TextButton* btn = new TextButton{"play"};
-
+            TextButton *btn = new TextButton{"+ to Left"};
             String id{std::to_string(rowNumber)};
             btn->setComponentID(id);
-
             btn->addListener(this);
             existingComponentToUpdate = btn;
+            btn->setColour(TextButton::buttonColourId, juce::Colours::darkslategrey);
         }
     }
 
+    // buttons for right deck
+    if (columnId == 4) {
+        if (existingComponentToUpdate == nullptr) {
+            TextButton *btn = new TextButton{"+ to Right"};
+            String id{std::to_string(rowNumber + 1000)};
+            btn->setComponentID(id);
+            btn->addListener(this);
+            existingComponentToUpdate = btn;
+            btn->setColour(TextButton::buttonColourId, juce::Colours::darkslategrey);
+        }
+    }
     return existingComponentToUpdate;
 }
 
+void PlaylistComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {}
+
+void PlaylistComponent::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) {}
+
+void PlaylistComponent::releaseResources() {}
+
 void PlaylistComponent::buttonClicked(Button *button) {
     int id = std::stoi(button->getComponentID().toStdString());
-    std::cout << "PlaylistComponent::buttonClicked " << trackTitles[id] << std::endl;
+    if (id < 1000) {
+        addToChannelList(interestedFiles[id], 0);
+    } else {
+        addToChannelList(interestedFiles[id - 1000], 1);
+    }
+}
+
+bool PlaylistComponent::isInterestedInFileDrag(const StringArray &files) {
+    return true;
+}
+
+void PlaylistComponent::filesDropped(const StringArray &files, int x, int y) {
+    for (String filename: files) {
+        std::string songPath = String(filename).toStdString();
+        std::size_t audioFilePosStart = songPath.find_last_of("\\");
+        std::size_t audioFilePosEnd = songPath.find_last_of(".");
+        std::string extn = songPath.substr(audioFilePosEnd + 1, songPath.length() - audioFilePosEnd);
+        std::string file = songPath.substr(audioFilePosStart + 1,
+                                           songPath.length() - audioFilePosStart - extn.size() - 2);
+
+        inputFiles.push_back(songPath);
+        trackTitles.push_back(file);
+
+        getAudioLength(URL{File{songPath}});
+    }
+
+    interestedTitle = trackTitles;
+    interestedFiles = inputFiles;
+
+    // update playlist table
+    tableComponent.updateContent();
+}
+
+void PlaylistComponent::textEditorTextChanged(TextEditor &textEditor) {
+    // clear table on change
+    interestedTitle.clear();
+    interestedDuration.clear();
+    interestedFiles.clear();
+
+    int pos = 0;
+    for (std::string track: trackTitles) {
+        // check substring of the song name
+        if (track.find(searchBar.getText().toStdString()) != std::string::npos) {
+            interestedTitle.push_back(trackTitles[pos]);
+            interestedDuration.push_back(trackDurations[pos]);
+            interestedFiles.push_back(inputFiles[pos]);
+        }
+
+        ++pos;
+    }
+
+    // update lists after iterating through all songs
+    tableComponent.updateContent();
+}
+
+void PlaylistComponent::addToChannelList(std::string filepath, int channel) {
+    if (channel == 0) {
+        playListL.push_back(filepath); // add to left channel
+    } else {
+        playListR.push_back(filepath); // add to right channel
+    }
+}
+
+void PlaylistComponent::getAudioLength(URL audioURL) {
+    double songLength = 0.0;
+    auto *reader = formatManager.createReaderFor(audioURL.createInputStream(false));
+
+    if (reader != nullptr) // good file!
+    {
+        std::unique_ptr<AudioFormatReaderSource> newSource(new AudioFormatReaderSource(reader, true));
+        transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
+        readerSource.reset(newSource.release());
+        double songLength = transportSource.getLengthInSeconds();
+        trackDurations.push_back(songLength);
+    }
+
+    interestedDuration = trackDurations;
 }
