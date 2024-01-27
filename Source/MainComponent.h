@@ -30,17 +30,24 @@ public:
 
 private:
     AudioFormatManager formatManager;
-    AudioThumbnailCache thumbCache{100}; // can hold 100 tracks in cache
+    AudioThumbnailCache thumbCache{ 100 }; //cache up to 100 files
 
-    DJAudioPlayer player1{formatManager};
-    DeckGUI deckGUI1{&player1, formatManager, thumbCache};
+    int channelL = 0;
+    int channelR = 1;
 
-    DJAudioPlayer player2{formatManager};
-    DeckGUI deckGUI2{&player2, formatManager, thumbCache};
+    PlaylistComponent playlistComponent{formatManager};
+    DJAudioPlayer playerLeft{formatManager};
+    DeckGUI deckGUILeft{&playerLeft,&playlistComponent, formatManager, thumbCache, channelL};
+
+    DJAudioPlayer playerRight{ formatManager };
+    DeckGUI deckGUIRight{&playerRight, &playlistComponent, formatManager, thumbCache, channelR};
+
+    Label waveformLabel;
+    Label posLabel;
+    Label widgetLabel;
+    Label playlistLabel;
 
     MixerAudioSource mixerSource;
-
-    PlaylistComponent playlistComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

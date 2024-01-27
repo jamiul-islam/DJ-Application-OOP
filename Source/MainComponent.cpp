@@ -17,11 +17,31 @@ MainComponent::MainComponent() {
         setAudioChannels(2, 2);
     }
 
-    addAndMakeVisible(deckGUI1);
-    addAndMakeVisible(deckGUI2);
+    // Register file formats enabled by JUCE
+    formatManager.registerBasicFormats();
+
+    // Add application components and make them visible
+    addAndMakeVisible(deckGUILeft);
+    addAndMakeVisible(deckGUIRight);
     addAndMakeVisible(playlistComponent);
 
-    formatManager.registerBasicFormats();
+    // Add Labels and customize visuals for labels
+    addAndMakeVisible(waveformLabel);
+    waveformLabel.setText("Waveforms", juce::dontSendNotification);
+    waveformLabel.setColour(juce::Label::textColourId, juce::Colours::whitesmoke);
+    waveformLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(posLabel);
+    posLabel.setText("Playback", juce::dontSendNotification);
+    posLabel.setColour(juce::Label::textColourId, juce::Colours::whitesmoke);
+    posLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(widgetLabel);
+    widgetLabel.setText("Widgets Controls", juce::dontSendNotification);
+    widgetLabel.setColour(juce::Label::textColourId, juce::Colours::whitesmoke);
+    widgetLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(playlistLabel);
+    playlistLabel.setText("Drag Files here to add to Library", juce::dontSendNotification);
+    playlistLabel.setColour(juce::Label::textColourId, juce::Colours::whitesmoke);
+    playlistLabel.setJustificationType(juce::Justification::centred);
 }
 
 MainComponent::~MainComponent() {
@@ -31,11 +51,11 @@ MainComponent::~MainComponent() {
 
 //==============================================================================
 void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
-    player1.prepareToPlay(samplesPerBlockExpected, sampleRate);
-    player2.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    playerLeft.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    playerRight.prepareToPlay(samplesPerBlockExpected, sampleRate);
 
-    mixerSource.addInputSource(&player1, false);
-    mixerSource.addInputSource(&player2, false);
+    mixerSource.addInputSource(&playerLeft, false);
+    mixerSource.addInputSource(&playerRight, false);
 }
 
 void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) {
@@ -43,8 +63,8 @@ void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill
 }
 
 void MainComponent::releaseResources() {
-    player1.releaseResources();
-    player2.releaseResources();
+    playerLeft.releaseResources();
+    playerRight.releaseResources();
     mixerSource.releaseResources();
 }
 
@@ -53,14 +73,10 @@ void MainComponent::paint(Graphics &g) {
     // (Our component is opaque, so we must completely fill the background with a
     // solid colour)
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
-
-    // You can add your drawing code here!
-    g.setFont(20.0f);
-    g.drawText("OTO DESK", getLocalBounds(), Justification::centred, true);
 }
 
 void MainComponent::resized() {
-    deckGUI1.setBounds(0, 0, getWidth() / 2, getHeight() / 2);
-    deckGUI2.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight() / 2);
+    deckGUILeft.setBounds(0, 0, getWidth() / 2, getHeight() / 2);
+    deckGUIRight.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight() / 2);
     playlistComponent.setBounds(0, getHeight() / 2, getWidth(), getHeight() / 2);
 }
