@@ -19,8 +19,7 @@ WaveformDisplay::WaveformDisplay(AudioFormatManager &formatManagerToUse, AudioTh
     audioThumb.addChangeListener(reinterpret_cast<ChangeListener *>(this));
 }
 
-WaveformDisplay::~WaveformDisplay() {
-}
+WaveformDisplay::~WaveformDisplay() {}
 
 void WaveformDisplay::paint(Graphics &g) {
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
@@ -28,26 +27,38 @@ void WaveformDisplay::paint(Graphics &g) {
     g.setColour(Colours::grey);
     g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
 
-    g.setColour(Colours::orange);
     if (fileLoaded) {
+        g.setColour(Colours::orange);
         audioThumb.drawChannel(g, getLocalBounds(), 0, audioThumb.getTotalLength(), 0, 1.0f);
-        g.setColour(Colours::lightgreen);
-        g.drawRect(position * getWidth(), 0, getWidth() / 20, getHeight());
+
+        //draw playhead in green
+        g.setColour(juce::Colours::orangered);
+        g.fillRect(position * getWidth(), 0, 2, getHeight());
+
+        //display name of currently playing track on the waveform in white
+        g.setColour(juce::Colours::floralwhite);
+        g.setFont(16.0f);
+        g.drawText(nowPlaying, getLocalBounds(), juce::Justification::centred, true);
     } else {
+        g.setColour(juce::Colours::lightgreen);
         g.setFont(20.0f);
         g.drawText("load a file", getLocalBounds(), Justification::centred, true);
     }
 }
 
-void WaveformDisplay::resized() {
-
-}
+void WaveformDisplay::resized() {}
 
 void WaveformDisplay::loadURL(URL audioURL) {
     audioThumb.clear();
     fileLoaded = audioThumb.setSource(new URLInputSource(audioURL));
     if (fileLoaded) {
-        std::cout << "wfd: loaded! " << std::endl;
+        std::string audioFile = audioURL.toString(false).toStdString();
+        std::size_t audioFilePosStart = audioFile.find_last_of("/");
+        std::size_t audioFilePosEnd = audioFile.find_last_of(".");
+        std::string extn = audioFile.substr(audioFilePosEnd + 1, audioFile.length() - audioFilePosEnd);
+        std::string file = audioFile.substr(audioFilePosStart + 1, audioFile.length() - audioFilePosStart - extn.size() - 2);
+
+        nowPlaying = file;
         repaint();
     } else {
         std::cout << "wfd: not loaded! " << std::endl;
@@ -55,13 +66,12 @@ void WaveformDisplay::loadURL(URL audioURL) {
 }
 
 void WaveformDisplay::changeListenerCallback(ChangeBroadcaster *source) {
-    std::cout << "wfd: change received! " << std::endl;
     repaint();
 }
 
 void WaveformDisplay::setPositionRelative(double pos) {
     if (pos != position && pos > 0) {
-        position = pos;
-        repaint();
+        position = pos; // first update the position
+        repaint(); // then perform repaint
     }
 }

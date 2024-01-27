@@ -21,16 +21,19 @@ public:
 
     void paint(juce::Graphics &) override;
     void resized() override;
-    void changeListenerCallback (ChangeBroadcaster *source);
     void loadURL(URL audioURL);
 
-/** set the relative position of the playHead*/
-void setPositionRelative(double pos);
+    /** listener to repaint whenever there has been a change to enable moving playhead*/
+    void changeListenerCallback (ChangeBroadcaster *source);
+    /** set the relative position of the playHead*/
+    void setPositionRelative(double pos);
 
 private:
     AudioThumbnail audioThumb;
     bool fileLoaded;
     double position;
+    /** name of the song being played*/
+    std::string nowPlaying;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveformDisplay)
 };
