@@ -43,18 +43,9 @@ public:
     void stop();
 
 private:
-    /** First Layer */
+
     AudioFormatManager& formatManager;
-
-    /**
-     * Second Layer, instantiate the playlist, ready for user to choose file,
-     * Use smart pointer: better memory management
-     * */
     std::unique_ptr<AudioFormatReaderSource> readerSource;
-
-    /** Control the audio playback, go back and forward, stop and play */
     AudioTransportSource transportSource;
-
-    /** resampling audio */
     ResamplingAudioSource resamplingSource{&transportSource, false, 2};
 };

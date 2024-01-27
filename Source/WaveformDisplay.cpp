@@ -52,11 +52,13 @@ void WaveformDisplay::loadURL(URL audioURL) {
     audioThumb.clear();
     fileLoaded = audioThumb.setSource(new URLInputSource(audioURL));
     if (fileLoaded) {
+        // -------------- WROTE THIS CODE START --------------
         std::string audioFile = audioURL.toString(false).toStdString();
         std::size_t audioFilePosStart = audioFile.find_last_of("/");
         std::size_t audioFilePosEnd = audioFile.find_last_of(".");
         std::string extn = audioFile.substr(audioFilePosEnd + 1, audioFile.length() - audioFilePosEnd);
         std::string file = audioFile.substr(audioFilePosStart + 1, audioFile.length() - audioFilePosStart - extn.size() - 2);
+        // -------------- WROTE THIS CODE END ----------------
 
         nowPlaying = file;
         repaint();

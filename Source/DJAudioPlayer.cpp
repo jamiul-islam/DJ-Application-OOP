@@ -10,13 +10,9 @@
 
 #include "DJAudioPlayer.h"
 
-DJAudioPlayer::DJAudioPlayer(AudioFormatManager &_formatManager) : formatManager(_formatManager) {
+DJAudioPlayer::DJAudioPlayer(AudioFormatManager &_formatManager) : formatManager(_formatManager) {}
 
-}
-
-DJAudioPlayer::~DJAudioPlayer() {
-
-}
+DJAudioPlayer::~DJAudioPlayer() {}
 
 void DJAudioPlayer::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
