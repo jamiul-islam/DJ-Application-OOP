@@ -5,6 +5,16 @@
     Created: 12 Jan 2024 11:18:28am
     Author:  JAMIUL ISLAM
 
+ * Tasks:
+ *
+ * 1. Initialize the WaveformDisplay with an AudioThumbnail - DONE
+ * 2. Implement the paint method to display waveform, playhead, and track name - DONE
+ * 3. Implement the resized method - DONE
+ * 4. Load an audio file from the provided URL - DONE
+ * 5. Handle changeListenerCallback to repaint on changes - DONE
+ * 6. Set the relative position of the playhead - DONE
+ *
+
   ==============================================================================
 */
 

@@ -5,6 +5,19 @@
     Created: 12 Jan 2024 3:31:32pm
     Author:  JAMIUL ISLAM
 
+ * Tasks:
+ * - Set up playlist library table with columns - DONE
+ * - Add search bar and listener - DONE
+ * - Initialize and adjust the layout of components - DONE
+ * - Implement methods for playlist table - DONE
+ * - Handle button clicks for adding songs to the left or right player - DONE
+ * - Implement file drag and drop functionality - DONE
+ * - Handle files dropped into the playlist - DONE
+ * - Handle changes in the search bar text - DONE
+ * - Add selected song to the left or right player playlist - DONE
+ * - Retrieve and store the duration of the audio file - DONE
+ *
+
   ==============================================================================
 */
 
