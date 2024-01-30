@@ -61,7 +61,7 @@ private:
     // visual theme
     LookAndFeel_V4 lookandfeel;
 
-
+    // variables for player, playlist, waveform
     DJAudioPlayer* player;
     PlaylistComponent* playlistComponent;
     WaveformDisplay waveformDisplay;

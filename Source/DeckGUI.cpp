@@ -5,6 +5,21 @@
     Created: 11 Jan 2024 9:26:59pm
     Author:  JAMIUL ISLAM
 
+ * Tasks:
+ * 
+ * 1. Add buttons and sliders for GUI items - DONE
+ * 2. Position sliders for each GUI - DONE
+ * 3. Set the range, styles, and default values for sliders - DONE
+ * 4. Add listeners to buttons and sliders - DONE
+ * 5. Implement the paint method for GUI components - DONE
+ * 6. Resize and position GUI components based on the layout - DONE
+ * 7. Handle button clicks for play, stop, and next - DONE
+ * 8. Handle slider value changes for volume, speed, and position - DONE
+ * 9. Update the content of the upNext table - DONE
+ * 10. Implement paint methods for row background and cell in upNext table - DONE
+ * 11. Implement the timer callback to update waveform display position - DONE
+ *
+
   ==============================================================================
 */
 
@@ -102,19 +117,24 @@ void DeckGUI::resized() {
 
 void DeckGUI::buttonClicked(Button *button) {
     if (button == &playButton) {
-        player->start();
+        player->start(); // start playing
     }
     if (button == &stopButton) {
-        player->stop();
+        player->stop(); // stop playing
     }
     if (button == &nextButton) {
-        if (channel == 0 && playlistComponent->playListL.size() > 0) {
+        if (channel == 0 && playlistComponent->playListL.size() > 0) { // if left deck and playlist is not empty
+            // load the first song in the playlist
             URL fileURL = URL{File{playlistComponent->playListL[0]}};
+            // load the waveform display
             player->loadURL(fileURL);
+            // load the waveform display
             waveformDisplay.loadURL(fileURL);
+            // remove the first song from the playlist
             playlistComponent->playListL.erase(playlistComponent->playListL.begin());
         }
-        if (channel == 1 && playlistComponent->playListR.size() > 0) {
+        if (channel == 1 && playlistComponent->playListR.size() > 0) { // if right deck and playlist is not empty
+            // do the same like left deck ...
             URL fileURL = URL{File{playlistComponent->playListR[0]}};
             player->loadURL(fileURL);
             waveformDisplay.loadURL(fileURL);
@@ -124,10 +144,11 @@ void DeckGUI::buttonClicked(Button *button) {
         if (nextButton.getButtonText() == "LOAD") {
             nextButton.setButtonText("NEXT");
         } else {
-            player->start();
+            player->start(); // start playing when next button is clicked
         }
     }
 
+    // at last, update the content of the upNext table
     upNext.updateContent();
 }
 
