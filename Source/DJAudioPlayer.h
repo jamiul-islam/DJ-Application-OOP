@@ -28,12 +28,17 @@ public:
     void releaseResources() override;
 
     // outer layer
+    /** load a URL into the transportSource */
     void loadURL(URL audioURL);
-    void setGain(double gain);
-    void setSpeed(double ratio);
+    /** set the gain of the transportSource */
+    void setGain(double gain); // gain : 0 -> 1
+    /** set the speed of the transportSource */
+    void setSpeed(double ratio); // speed : 0 -> 100
 
     // positioning
+    /** set the position of the playHead */
     void setPosition(double posInSecs);
+    /** get the position of the playHead */
     void setPositionRelative(double pos);
     /** get the relative position of the playHead */
     double getPositionRelative();
@@ -44,8 +49,8 @@ public:
 
 private:
 
-    AudioFormatManager& formatManager;
-    std::unique_ptr<AudioFormatReaderSource> readerSource;
-    AudioTransportSource transportSource;
-    ResamplingAudioSource resamplingSource{&transportSource, false, 2};
+    AudioFormatManager& formatManager; // reference to the formatManager
+    std::unique_ptr<AudioFormatReaderSource> readerSource; // pointer to the readerSource
+    AudioTransportSource transportSource; // transportSource initialization
+    ResamplingAudioSource resamplingSource{&transportSource, false, 2}; // resamplingSource initialization
 };
