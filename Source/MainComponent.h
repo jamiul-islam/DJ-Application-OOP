@@ -35,6 +35,7 @@ private:
     int channelL = 0;
     int channelR = 1;
 
+    // This reference is provided as a quick way for my editor to get access
     PlaylistComponent playlistComponent{formatManager};
     DJAudioPlayer playerLeft{formatManager};
     DeckGUI deckGUILeft{&playerLeft,&playlistComponent, formatManager, thumbCache, channelL};
@@ -42,6 +43,7 @@ private:
     DJAudioPlayer playerRight{ formatManager };
     DeckGUI deckGUIRight{&playerRight, &playlistComponent, formatManager, thumbCache, channelR};
 
+    // Labels of the GUI
     Label waveformLabel;
     Label posLabel;
     Label widgetLabel;
