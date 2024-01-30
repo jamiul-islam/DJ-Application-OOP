@@ -36,12 +36,15 @@ public:
     void paintCell(Graphics &, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
     Component* refreshComponentForCell (int rowNumber, int columnId, bool isRowSelected, Component *existingComponentToUpdate) override;
 
+    /** audio source */
     void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
     void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) override;
     void releaseResources() override;
 
+    /** Button::button listener */
     void buttonClicked(Button* button) override;
 
+    /** drag and drop feature */
     bool isInterestedInFileDrag(const StringArray& files) override;
     void filesDropped(const StringArray& files, int x, int y) override;
     void textEditorTextChanged(TextEditor&) override;
@@ -61,19 +64,21 @@ private:
     TableListBox tableComponent;
 
     // for storing music files
-    std::vector<std::string> inputFiles;
-    std::vector<std::string> interestedFiles;
-    std::vector<std::string> trackTitles;
-    std::vector<std::string> interestedTitle;
-    std::vector<int> trackDurations;
-    std::vector<int> interestedDuration;
+    std::vector<std::string> inputSongs; // stores all the songs
+    std::vector<std::string> interestedSongs; // stores songs that are interested in dropping
+    std::vector<std::string> songTitles; // stores song titles
+    std::vector<std::string> interestedSongTitles; // stores song titles that are interested in dropping
+    std::vector<int> songDurations; // stores song durations
+    std::vector<int> interestedSongDuration; // stores song durations that are interested in dropping
 
-    // search bar for playlist
+    /** search bar and search label */
     TextEditor searchBar;
     Label searchLabel;
 
-    void addToChannelList(std::string filepath, int channel);
-    void getAudioLength(URL audioURL);
+    /** adds songs to the playlist */
+    void addToDecklList(std::string filepath, int channel);
+    /** gets the duration of the audio file */
+    void getAudioLen(URL audioURL);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlaylistComponent)
 };
