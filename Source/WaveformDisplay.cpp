@@ -31,7 +31,7 @@ void WaveformDisplay::paint(Graphics &g) {
         g.setColour(Colours::orange);
         audioThumb.drawChannel(g, getLocalBounds(), 0, audioThumb.getTotalLength(), 0, 1.0f);
 
-        //draw playhead in green
+        //draw the playHead
         g.setColour(juce::Colours::orangered);
         g.fillRect(position * getWidth(), 0, 2, getHeight());
 
@@ -40,7 +40,7 @@ void WaveformDisplay::paint(Graphics &g) {
         g.setFont(16.0f);
         g.drawText(currentlyPlaying, getLocalBounds(), juce::Justification::centred, true);
     } else {
-        g.setColour(juce::Colours::lightgreen);
+        g.setColour(juce::Colours::cornflowerblue);
         g.setFont(20.0f);
         g.drawText("load a file", getLocalBounds(), Justification::centred, true);
     }

@@ -66,7 +66,7 @@ DeckGUI::DeckGUI(DJAudioPlayer *_player, PlaylistComponent *_playlistComponent, 
     speedLabel.setJustificationType(juce::Justification::centred);
 
     // set colour to sliders
-    getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::mediumspringgreen); //dial
+    getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::cornflowerblue); //dial
     getLookAndFeel().setColour(juce::Slider::trackColourId, juce::Colours::lightslategrey); //body
     getLookAndFeel().setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::lightslategrey); //body
 
@@ -153,7 +153,7 @@ int DeckGUI::getNumRows() {
 }
 
 void DeckGUI::paintRowBackground(Graphics &g, int rowNumber, int width, int height, bool rowIsSelected) {
-    g.fillAll(juce::Colours::mediumspringgreen);
+    g.fillAll(juce::Colours::cornflowerblue);
 }
 
 void DeckGUI::paintCell(Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) {
