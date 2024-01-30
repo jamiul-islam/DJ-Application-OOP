@@ -44,7 +44,7 @@
         <MODULEPATH id="juce_audio_basics" path="../../juce"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <CLION targetFolder="Builds/CLion">
+    <CLION targetFolder="Builds/CLion" clionXcodeEnabled="1">
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra"/>
         <MODULEPATH id="juce_gui_basics"/>

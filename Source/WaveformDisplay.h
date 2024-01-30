@@ -32,8 +32,9 @@ private:
     AudioThumbnail audioThumb;
     bool fileLoaded;
     double position;
+    
     /** name of the song being played*/
-    std::string nowPlaying;
+    std::string currentlyPlaying;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveformDisplay)
 };

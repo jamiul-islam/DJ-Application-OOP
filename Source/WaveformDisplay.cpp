@@ -38,7 +38,7 @@ void WaveformDisplay::paint(Graphics &g) {
         //display name of currently playing track on the waveform in white
         g.setColour(juce::Colours::floralwhite);
         g.setFont(16.0f);
-        g.drawText(nowPlaying, getLocalBounds(), juce::Justification::centred, true);
+        g.drawText(currentlyPlaying, getLocalBounds(), juce::Justification::centred, true);
     } else {
         g.setColour(juce::Colours::lightgreen);
         g.setFont(20.0f);
@@ -58,7 +58,7 @@ void WaveformDisplay::loadURL(URL audioURL) {
         std::string extn = audioFile.substr(audioFilePosEnd + 1, audioFile.length() - audioFilePosEnd);
         std::string file = audioFile.substr(audioFilePosStart + 1, audioFile.length() - audioFilePosStart - extn.size() - 2);
 
-        nowPlaying = file;
+        currentlyPlaying = file;
         repaint();
     } else {
         std::cout << "wfd: not loaded! " << std::endl;
