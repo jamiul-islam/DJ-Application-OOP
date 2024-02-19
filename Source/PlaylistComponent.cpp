@@ -107,9 +107,9 @@ void PlaylistComponent::buttonClicked(Button *button) {
     // Handle button clicks for adding songs to the left or right player
     int id = std::stoi(button->getComponentID().toStdString());
     if (id < 1000) {
-        addToDecklList(interestedSongs[id], 0);
+        addToDeckList(interestedSongs[id], 0);
     } else {
-        addToDecklList(interestedSongs[id - 1000], 1);
+        addToDeckList(interestedSongs[id - 1000], 1);
     }
 }
 
@@ -162,7 +162,7 @@ void PlaylistComponent::textEditorTextChanged(TextEditor &textEditor) {
     tableComponent.updateContent();
 }
 
-void PlaylistComponent::addToDecklList(std::string filepath, int channel) {
+void PlaylistComponent::addToDeckList(std::string filepath, int channel) {
     // Add selected song to the left or right player playlist
     if (channel == 0) {
         playListL.push_back(filepath); // add to left deck

@@ -166,7 +166,7 @@ private:
      * @param filepath The file path of the selected song.
      * @param channel The channel (left or right) to add the song to.
      */
-    void addToDecklList(std::string filepath, int channel);
+    void addToDeckList(std::string filepath, int channel);
 
     /**
      * @brief Get the duration of the audio file.
