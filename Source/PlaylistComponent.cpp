@@ -28,10 +28,10 @@
 PlaylistComponent::PlaylistComponent(AudioFormatManager &_formatManager) : formatManager(_formatManager) {
 
     // Set up playlist library table
-    tableComponent.getHeader().addColumn("Song Title", 1, 250);
+    tableComponent.getHeader().addColumn("Song Title", 1, 650);
     tableComponent.getHeader().addColumn("Duration", 2, 100);
-    tableComponent.getHeader().addColumn("+ to Left", 3, 100);
-    tableComponent.getHeader().addColumn("+ to Right", 4, 100);
+    tableComponent.getHeader().addColumn("+ Left", 3, 100);
+    tableComponent.getHeader().addColumn("+ Right", 4, 100);
     tableComponent.setModel(this);
     addAndMakeVisible(tableComponent);
 

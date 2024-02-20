@@ -76,7 +76,7 @@ DeckGUI::DeckGUI(DJAudioPlayer *_player, PlaylistComponent *_playlistComponent, 
     speedSlider.setMouseDragSensitivity(80);
 
     // label for speed slider
-    speedLabel.setText("Speed X", juce::dontSendNotification);
+    speedLabel.setText("Speed", juce::dontSendNotification);
     speedLabel.attachToComponent(&speedSlider, false);
     speedLabel.setJustificationType(juce::Justification::centred);
 
@@ -112,7 +112,6 @@ void DeckGUI::resized() {
     playButton.setBounds(colW + 10, rowH * 5 + 10, colW - 20, rowH - 20);
     stopButton.setBounds(colW * 2 + 10, rowH * 5 + 10, colW - 20, rowH - 20);
     nextButton.setBounds(colW * 3 + 10, rowH * 5 + 10, colW - 20, rowH - 20);
-
 }
 
 void DeckGUI::buttonClicked(Button *button) {
