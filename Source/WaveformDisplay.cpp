@@ -31,6 +31,10 @@ WaveformDisplay::WaveformDisplay(AudioFormatManager &formatManagerToUse, AudioTh
 
 WaveformDisplay::~WaveformDisplay() {}
 
+// ***********************************************
+// *********** SELF WRITTEN CODE START ***********
+// ********** slight modification on UI **********
+// ***********************************************
 void WaveformDisplay::paint(Graphics &g) {
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
 
@@ -55,9 +59,15 @@ void WaveformDisplay::paint(Graphics &g) {
         g.drawText("load a file", getLocalBounds(), Justification::centred, true);
     }
 }
+// ***********************************************
+// *********** SELF WRITTEN CODE END *************
+// ***********************************************
 
 void WaveformDisplay::resized() {}
 
+// ***********************************************
+// *********** SELF WRITTEN CODE START ***********
+// ***********************************************
 void WaveformDisplay::loadURL(URL audioURL) {
     audioThumb.clear();
     fileLoaded = audioThumb.setSource(new URLInputSource(audioURL));
@@ -71,9 +81,12 @@ void WaveformDisplay::loadURL(URL audioURL) {
         currentlyPlaying = file;
         repaint();
     } else {
-        std::cout << "wfd: not loaded! " << std::endl;
+        std::cout << "file not loaded yet! " << std::endl;
     }
 }
+// ***********************************************
+// *********** SELF WRITTEN CODE END ***********
+// ***********************************************
 
 void WaveformDisplay::changeListenerCallback(ChangeBroadcaster *source) {
     repaint();

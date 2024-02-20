@@ -16,8 +16,8 @@
  * 7. Handle button clicks for play, stop, and next - DONE
  * 8. Handle slider value changes for volume, speed, and position - DONE
  * 9. Update the content of the upNext table - DONE
- * 10. Implement paint methods for row background and cell in upNext table - DONE
- * 11. Implement the timer callback to update waveform display position - DONE
+ * 10.Implement paint methods for row background and cell in upNext table - DONE
+ * 11.Implement the timer callback to update waveform display position - DONE
  *
 
   ==============================================================================
@@ -27,6 +27,10 @@
 #include "DeckGUI.h"
 
 //==============================================================================
+// ***********************************************
+// *********** SELF WRITTEN CODE START ***********
+// ********slight modifications on the GUI********
+// ***********************************************
 DeckGUI::DeckGUI(DJAudioPlayer *_player, PlaylistComponent *_playlistComponent, AudioFormatManager &formatManagerToUse,
                  AudioThumbnailCache &cacheToUse, int channelToUse
 ) : player(_player), playlistComponent(_playlistComponent), waveformDisplay(formatManagerToUse, cacheToUse),
@@ -80,6 +84,9 @@ DeckGUI::DeckGUI(DJAudioPlayer *_player, PlaylistComponent *_playlistComponent, 
     speedLabel.attachToComponent(&speedSlider, false);
     speedLabel.setJustificationType(juce::Justification::centred);
 
+// ***********************************************
+// *********** SELF WRITTEN CODE START ***********
+// ***********************************************
     // set colour to sliders
     getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::cornflowerblue); //dial
     getLookAndFeel().setColour(juce::Slider::trackColourId, juce::Colours::lightslategrey); //body
@@ -89,6 +96,9 @@ DeckGUI::DeckGUI(DJAudioPlayer *_player, PlaylistComponent *_playlistComponent, 
     upNext.setModel(this);
 
     startTimer(100);
+// ***********************************************
+// *********** SELF WRITTEN CODE END *************
+// ***********************************************
 }
 
 DeckGUI::~DeckGUI() {
@@ -97,6 +107,10 @@ DeckGUI::~DeckGUI() {
 
 void DeckGUI::paint(Graphics &g) {}
 
+// ***********************************************
+// *********** SELF WRITTEN CODE START ***********
+// ********slight modifications on the GUI********
+// ***********************************************
 void DeckGUI::resized() {
     double rowH = getHeight() / 6;
     double colW = getWidth() / 4;
@@ -150,6 +164,9 @@ void DeckGUI::buttonClicked(Button *button) {
     // at last, update the content of the upNext table
     upNext.updateContent();
 }
+// ***********************************************
+// *********** SELF WRITTEN CODE END *************
+// ***********************************************
 
 void DeckGUI::sliderValueChanged(Slider *slider) {
     if (slider == &volSlider) {
@@ -163,6 +180,9 @@ void DeckGUI::sliderValueChanged(Slider *slider) {
     }
 }
 
+// ***********************************************
+// *********** SELF WRITTEN CODE START ***********
+// ***********************************************
 int DeckGUI::getNumRows() {
     if (channel == 0) {
         return playlistComponent->playListL.size(); // left deck
@@ -197,3 +217,6 @@ void DeckGUI::paintCell(Graphics &g, int rowNumber, int columnId, int width, int
 void DeckGUI::timerCallback() {
     waveformDisplay.setPositionRelative(player->getPositionRelative());
 }
+// ***********************************************
+// *********** SELF WRITTEN CODE END *************
+// ***********************************************

@@ -82,6 +82,9 @@ void PlaylistComponent::paintCell(Graphics &g, int rowNumber, int columnId, int 
     }
 }
 
+// ***********************************************
+// *********** SELF WRITTEN CODE START ***********
+// ***********************************************
 Component *PlaylistComponent::refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component *existingComponentToUpdate) {
     // Refresh components for the "Add to Left" and "Add to Right" buttons in the playlist
     if (columnId == 3 || columnId == 4) {
@@ -96,6 +99,9 @@ Component *PlaylistComponent::refreshComponentForCell(int rowNumber, int columnI
     }
     return existingComponentToUpdate;
 }
+// ***********************************************
+// *********** SELF WRITTEN CODE END *************
+// ***********************************************
 
 void PlaylistComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {}
 
@@ -103,6 +109,9 @@ void PlaylistComponent::getNextAudioBlock(const AudioSourceChannelInfo &bufferTo
 
 void PlaylistComponent::releaseResources() {}
 
+// ***********************************************
+// *********** SELF WRITTEN CODE START ***********
+// ***********************************************
 void PlaylistComponent::buttonClicked(Button *button) {
     // Handle button clicks for adding songs to the left or right player
     int id = std::stoi(button->getComponentID().toStdString());
@@ -191,3 +200,6 @@ void PlaylistComponent::getAudioLen(URL audioURL) {
 
     interestedSongDuration = songDurations; // update the interested song durations
 }
+// ***********************************************
+// *********** SELF WRITTEN CODE END *************
+// ***********************************************

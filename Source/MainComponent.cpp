@@ -20,6 +20,11 @@ MainComponent::MainComponent() {
     // Register file formats enabled by JUCE
     formatManager.registerBasicFormats();
 
+// ***********************************************
+// *********** SELF WRITTEN CODE START ***********
+// ****slight change in the order of the code*****
+// ***********************************************
+
     // Add application components and make them visible
     addAndMakeVisible(deckGUILeft);
     addAndMakeVisible(deckGUIRight);
@@ -42,6 +47,9 @@ MainComponent::MainComponent() {
     playlistLabel.setText("Drag Files here to add to Library", juce::dontSendNotification);
     playlistLabel.setColour(juce::Label::textColourId, juce::Colours::whitesmoke);
     playlistLabel.setJustificationType(juce::Justification::centred);
+// ***********************************************
+// *********** SELF WRITTEN CODE END *************
+// ***********************************************
 }
 
 MainComponent::~MainComponent() {
@@ -72,9 +80,14 @@ void MainComponent::releaseResources() {
 void MainComponent::paint(Graphics &g) {
     g.fillAll (juce::Colours::lightsteelblue);
 }
-
+// ***********************************************
+// *********** SELF WRITTEN CODE START ***********
+// ***********************************************
 void MainComponent::resized() {
     deckGUILeft.setBounds(0, 0, getWidth() / 2, getHeight() / 2);
     deckGUIRight.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight() / 2);
     playlistComponent.setBounds(0, getHeight() / 2, getWidth(), getHeight() / 2);
 }
+// ***********************************************
+// *********** SELF WRITTEN CODE END *************
+// ***********************************************
