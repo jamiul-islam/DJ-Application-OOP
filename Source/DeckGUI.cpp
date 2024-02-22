@@ -27,10 +27,6 @@
 #include "DeckGUI.h"
 
 //==============================================================================
-// ***********************************************
-// *********** SELF WRITTEN CODE START ***********
-// ********slight modifications on the GUI********
-// ***********************************************
 DeckGUI::DeckGUI(DJAudioPlayer *_player, PlaylistComponent *_playlistComponent, AudioFormatManager &formatManagerToUse,
                  AudioThumbnailCache &cacheToUse, int channelToUse
 ) : player(_player), playlistComponent(_playlistComponent), waveformDisplay(formatManagerToUse, cacheToUse),
@@ -61,6 +57,11 @@ DeckGUI::DeckGUI(DJAudioPlayer *_player, PlaylistComponent *_playlistComponent, 
     posSlider.setRange(0.0, 1.0);
     posSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 
+// ***********************************************
+// *********** SELF WRITTEN CODE START ***********
+// ******* slight modifications on the GUI *******
+// ***********************************************
+
     // volume slider for each GUI
     volSlider.setRange(0.0, 1.0);
     volSlider.setValue(0.5); //default volume half of max vol
@@ -84,9 +85,6 @@ DeckGUI::DeckGUI(DJAudioPlayer *_player, PlaylistComponent *_playlistComponent, 
     speedLabel.attachToComponent(&speedSlider, false);
     speedLabel.setJustificationType(juce::Justification::centred);
 
-// ***********************************************
-// *********** SELF WRITTEN CODE START ***********
-// ***********************************************
     // set colour to sliders
     getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::cornflowerblue); //dial
     getLookAndFeel().setColour(juce::Slider::trackColourId, juce::Colours::lightslategrey); //body
@@ -109,7 +107,7 @@ void DeckGUI::paint(Graphics &g) {}
 
 // ***********************************************
 // *********** SELF WRITTEN CODE START ***********
-// ********slight modifications on the GUI********
+// ******* slight modifications on the GUI *******
 // ***********************************************
 void DeckGUI::resized() {
     double rowH = getHeight() / 6;
